@@ -11,7 +11,7 @@ import sbt._
  * -DOTI_LOCAL_REPOSITORY=<dir> where <dir> is a local Ivy repository directory
  */
 object OTIChangeMigration extends Build {
-  
+
   // ======================
 
   lazy val otiSettings = Seq(
@@ -41,33 +41,49 @@ object OTIChangeMigration extends Build {
       graphSettings ++
       com.banno.license.Plugin.licenseSettings ++
       Seq(
-        sourceDirectories in Compile ~= { _.filter(_.exists) },
-        sourceDirectories in Test ~= { _.filter(_.exists) },
-        unmanagedSourceDirectories in Compile ~= { _.filter(_.exists) },
-        unmanagedSourceDirectories in Test ~= { _.filter(_.exists) },
-        unmanagedResourceDirectories in Compile ~= { _.filter(_.exists) },
-        unmanagedResourceDirectories in Test ~= { _.filter(_.exists) }
+        sourceDirectories in Compile ~= {
+          _.filter(_.exists)
+        },
+        sourceDirectories in Test ~= {
+          _.filter(_.exists)
+        },
+        unmanagedSourceDirectories in Compile ~= {
+          _.filter(_.exists)
+        },
+        unmanagedSourceDirectories in Test ~= {
+          _.filter(_.exists)
+        },
+        unmanagedResourceDirectories in Compile ~= {
+          _.filter(_.exists)
+        },
+        unmanagedResourceDirectories in Test ~= {
+          _.filter(_.exists)
+        }
       )
-      
+
   lazy val oti_change_migration = Project(
     "oti-change-migration",
     file(".")).
     settings(otiSettings: _*).
     settings(commonSettings: _*).
     settings(
-        version := Versions.version,
-        removeExistingHeaderBlock := true,
-        libraryDependencies ++= Seq(
-          "org.scala-lang" % "scala-reflect" % Versions.scala % "provided" withSources() withJavadoc(),
-          "org.scala-lang" % "scala-library" % Versions.scala % "provided" withSources() withJavadoc(),
-          "org.scala-lang" % "scala-compiler" % Versions.scala % "provided" withSources() withJavadoc(),
-          "gov.nasa.jpl.mbee.omg.oti" %% "oti-core" % Versions.oti_core_version withSources() withJavadoc(),
-          "org.eclipse.emf" % "org.eclipse.emf.ecore" % Versions.emf_ecore % "provided" withSources() withJavadoc(),
-          "org.eclipse.emf" % "org.eclipse.emf.ecore.xmi" % Versions.emf_ecore % "provided" withSources() withJavadoc(),
-          "org.eclipse.emf" % "org.eclipse.emf.common" % Versions.emf_ecore % "provided" withSources() withJavadoc()
-        ),
-        classDirectory in Compile := baseDirectory.value / "bin",
-        shellPrompt := { state => Project.extract(state).currentRef.project + " @ " + Versions.version_suffix + "> " }
+      version := Versions.version,
+      removeExistingHeaderBlock := true,
+      libraryDependencies ++= Seq(
+        "org.scala-lang" % "scala-reflect" % Versions.scala % "provided" withSources() withJavadoc(),
+        "org.scala-lang" % "scala-library" % Versions.scala % "provided" withSources() withJavadoc(),
+        "org.scala-lang" % "scala-compiler" % Versions.scala % "provided" withSources() withJavadoc(),
+        "gov.nasa.jpl.mbee.omg.oti" %% "oti-core" % Versions.oti_core_version withSources() withJavadoc(),
+        "org.eclipse.emf" % "org.eclipse.emf.ecore" % Versions.emf_ecore % "provided" withSources() withJavadoc(),
+        "org.eclipse.emf" % "org.eclipse.emf.ecore.xmi" % Versions.emf_ecore % "provided" withSources() withJavadoc(),
+        "org.eclipse.emf" % "org.eclipse.emf.common" % Versions.emf_ecore % "provided" withSources() withJavadoc()
+      ),
+      classDirectory in Compile := baseDirectory.value / "bin",
+      packageOptions in(Compile, packageBin) += {
+        val manifest = Using.fileInputStream(baseDirectory.value / "META-INF" / "MANIFEST.MF") { in => new java.util.jar.Manifest(in) }
+        Package.JarManifest(manifest)
+      },
+      shellPrompt := { state => Project.extract(state).currentRef.project + " @ " + Versions.version_suffix + "> " }
     )
-    
+
 }
