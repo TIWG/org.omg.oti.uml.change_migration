@@ -59,7 +59,7 @@ import scala.util.Success
 
 case class Metamodel( val otiDir: File, val rs: ResourceSet = new ResourceSetImpl() ) {
 
-  val migrationMMFile = new File( otiDir, "models/Migration.ecore" )
+  val migrationMMFile = new File( otiDir, "models/OTIChangeMigration.ecore" )
   require( migrationMMFile.exists && migrationMMFile.canRead )
 
   if ( !rs.getResourceFactoryRegistry.getExtensionToFactoryMap.containsKey( "ecore" ) )

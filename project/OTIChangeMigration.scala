@@ -81,9 +81,13 @@ object OTIChangeMigration extends Build {
       ),
       classDirectory in Compile := baseDirectory.value / "bin",
       packageOptions in(Compile, packageBin) += {
-        val manifest = Using.fileInputStream(baseDirectory.value / "META-INF" / "MANIFEST.MF") { in => new java.util.jar.Manifest(in) }
+        val manifest = Using.fileInputStream(baseDirectory.value / "META-INF" / "MANIFEST.MF") { in =>
+          new java.util.jar.Manifest(in)
+        }
         Package.JarManifest(manifest)
       },
+      mappings in (Compile, packageBin) <++= baseDirectory map { dir => (dir / "resources").*** pair relativeTo(dir) },
+      mappings in (Compile, packageSrc) <++= baseDirectory map { dir => (dir / "resources").*** pair relativeTo(dir) },
       shellPrompt := { state => Project.extract(state).currentRef.project + " @ " + Versions.version_suffix + "> " }
     )
 
