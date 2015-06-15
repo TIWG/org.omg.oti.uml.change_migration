@@ -97,13 +97,7 @@ object OTIChangeMigration extends Build {
       },
 
       // the '*-resource.zip' archive will start from: 'dynamicScripts/<dynamicScriptsProjectName>'
-      com.typesafe.sbt.packager.Keys.topLevelDirectory in Universal := {
-        val dynamicScriptsProjectName = baseDirectory.value.getName
-        require(
-          QUALIFIED_NAME.pattern.matcher(dynamicScriptsProjectName).matches,
-          s"The project name, '$dynamicScriptsProjectName` is not a valid Java qualified name")
-        Some("dynamicScripts/" + dynamicScriptsProjectName)
-      },
+      com.typesafe.sbt.packager.Keys.topLevelDirectory in Universal := Some("dynamicScripts/org.omg.oti.changeMigration"),
 
       // name the '*-resource.zip' in the same way as other artifacts
       com.typesafe.sbt.packager.Keys.packageName in Universal :=
