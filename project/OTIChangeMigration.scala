@@ -104,11 +104,14 @@ object OTIChangeMigration extends Build {
       ),
 
       classDirectory in Compile := baseDirectory.value / "bin",
-      packageOptions in(Compile, packageBin) += {
+      packageOptions in (Compile, packageBin) += {
         val manifest = Using.fileInputStream(baseDirectory.value / "META-INF" / "MANIFEST.MF") { in =>
           new java.util.jar.Manifest(in)
         }
         Package.JarManifest(manifest)
+      },
+      mappings in (Compile, packageBin) += {
+        (baseDirectory.value / "plugin.xml") -> "plugin.xml"
       },
 
       // the '*-resource.zip' archive will start from: 'dynamicScripts/<dynamicScriptsProjectName>'
