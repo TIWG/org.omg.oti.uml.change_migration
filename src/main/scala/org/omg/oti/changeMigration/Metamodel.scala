@@ -50,12 +50,19 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.EAttribute
 import org.eclipse.emf.common.util.EList
+
+import scala.{Option,None,Some,StringContext}
+import scala.Predef.{require,String}
 import scala.collection.JavaConversions._
+import scala.collection.immutable._
 import scala.language.postfixOps
 import scala.reflect.ClassTag
 import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
+
+import java.lang.Throwable
+import java.lang.IllegalArgumentException
 
 case class Metamodel( val otiDir: File, val rs: ResourceSet = new ResourceSetImpl() ) {
 
