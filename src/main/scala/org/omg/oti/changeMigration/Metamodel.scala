@@ -99,19 +99,25 @@ case class Metamodel( val otiDir: File, val rs: ResourceSet = new ResourceSetImp
 
   val migrationMMFactory = migrationMMPkg.getEFactoryInstance
 
+  import org.omg.oti.ecoreMetamodel._
+
   val Old2NewIDMappingClass =
-    migrationMMPkg.getEClassifier( "Old2NewIDMapping" ).asInstanceOf[EClass]
+    migrationMMPkg.getEClass( "Old2NewIDMapping" )
   val Old2NewIDMapping_entries =
-    Old2NewIDMappingClass.getEStructuralFeature( "entries" ).asInstanceOf[EReference]
+    Old2NewIDMappingClass.getEStructuralFeatureReference( "entries" )
   val Old2NewIDMapping_modelIdentifier =
-    Old2NewIDMappingClass.getEStructuralFeature( "modelIdentifier" ).asInstanceOf[EAttribute]
+    Old2NewIDMappingClass.getEStructuralFeatureReference( "modelIdentifier" )
 
   val Old2NewIDEntryClass =
-    migrationMMPkg.getEClassifier( "Old2NewIDEntry" ).asInstanceOf[EClass]
-  val Old2NewIDEntry_old =
-    Old2NewIDEntryClass.getEStructuralFeature( "old" ).asInstanceOf[EAttribute]
-  val Old2NewIDEntry_new =
-    Old2NewIDEntryClass.getEStructuralFeature( "new" ).asInstanceOf[EAttribute]
+    migrationMMPkg.getEClass( "Old2NewIDEntry" )
+  val Old2NewIDEntry_oldID =
+    Old2NewIDEntryClass.getEStructuralFeatureAttribute( "oldID" )
+  val Old2NewIDEntry_oldUUID =
+    Old2NewIDEntryClass.getEStructuralFeatureAttribute( "oldUUID" )
+  val Old2NewIDEntry_newID =
+    Old2NewIDEntryClass.getEStructuralFeatureAttribute( "newID" )
+  val Old2NewIDEntry_newUUID =
+    Old2NewIDEntryClass.getEStructuralFeatureAttribute( "newUUID" )
 
   def loadOld2NewIDMappingResource( uri: URI ): Try[Old2NewIDMapping] =
     try {
@@ -172,18 +178,32 @@ class Old2NewIDEntry( val eObject: EObject )( implicit migrationMM: Metamodel ) 
 
   import migrationMM._
 
-  def getOldID: Option[String] = eObject.eGet( Old2NewIDEntry_old ) match {
+  def getOldID: Option[String] = eObject.eGet( Old2NewIDEntry_oldID ) match {
     case s: String => Some( s )
     case _         => None
   }
 
-  def setOldID( id: String ) = eObject.eSet( Old2NewIDEntry_old, id )
+  def setOldID( id: String ) = eObject.eSet( Old2NewIDEntry_oldID, id )
 
-  def getNewID: Option[String] = eObject.eGet( Old2NewIDEntry_new ) match {
+  def getOldUUID: Option[String] = eObject.eGet( Old2NewIDEntry_oldUUID ) match {
     case s: String => Some( s )
     case _         => None
   }
 
-  def setNewID( id: String ) = eObject.eSet( Old2NewIDEntry_new, id )
+  def setOldUUID( uuid: String ) = eObject.eSet( Old2NewIDEntry_oldUUID, uuid )
+
+  def getNewID: Option[String] = eObject.eGet( Old2NewIDEntry_newID ) match {
+    case s: String => Some( s )
+    case _         => None
+  }
+
+  def setNewID( id: String ) = eObject.eSet( Old2NewIDEntry_newID, id )
+
+  def getNewUUID: Option[String] = eObject.eGet( Old2NewIDEntry_newUUID ) match {
+    case s: String => Some( s )
+    case _         => None
+  }
+
+  def setNewUUID( uuid: String ) = eObject.eSet( Old2NewIDEntry_newUUID, uuid )
 
 }
