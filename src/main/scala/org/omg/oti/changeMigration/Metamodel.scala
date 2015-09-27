@@ -106,7 +106,7 @@ case class Metamodel( val otiDir: File, val rs: ResourceSet = new ResourceSetImp
   val Old2NewIDMapping_entries =
     Old2NewIDMappingClass.getEStructuralFeatureReference( "entries" )
   val Old2NewIDMapping_modelIdentifier =
-    Old2NewIDMappingClass.getEStructuralFeatureReference( "modelIdentifier" )
+    Old2NewIDMappingClass.getEStructuralFeatureAttribute( "modelIdentifier" )
 
   val Old2NewIDEntryClass =
     migrationMMPkg.getEClass( "Old2NewIDEntry" )
