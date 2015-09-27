@@ -73,6 +73,11 @@ case class Metamodel( val otiDir: File, val rs: ResourceSet = new ResourceSetImp
   .getExtensionToFactoryMap
   .put("ecore", new EcoreResourceFactoryImpl())
 
+  rs
+  .getResourceFactoryRegistry
+  .getExtensionToFactoryMap
+  .put("xmi", new XMIResourceFactoryImpl())
+
   val migrationMMURI: URI =
     Option.apply(classOf[Metamodel].getResource("/models/OTIChangeMigration.ecore"))
     .fold[URI]{
