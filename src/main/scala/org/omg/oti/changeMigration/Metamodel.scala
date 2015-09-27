@@ -43,6 +43,7 @@ import java.io.File
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl
+import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EClass
@@ -52,7 +53,7 @@ import org.eclipse.emf.ecore.EAttribute
 import org.eclipse.emf.common.util.EList
 
 import scala.{Option,None,Some,StringContext}
-import scala.Predef.{require,String}
+import scala.Predef.{classOf,require,String}
 import scala.collection.JavaConversions._
 import scala.collection.immutable._
 import scala.language.postfixOps
@@ -63,16 +64,25 @@ import scala.util.Success
 
 import java.lang.Throwable
 import java.lang.IllegalArgumentException
+import java.lang.System
 
 case class Metamodel( val otiDir: File, val rs: ResourceSet = new ResourceSetImpl() ) {
 
-  val migrationMMFile = new File( otiDir, "models/OTIChangeMigration.ecore" )
-  require( migrationMMFile.exists && migrationMMFile.canRead )
+  rs
+  .getResourceFactoryRegistry
+  .getExtensionToFactoryMap
+  .put("ecore", new EcoreResourceFactoryImpl())
 
-  if ( !rs.getResourceFactoryRegistry.getExtensionToFactoryMap.containsKey( "ecore" ) )
-    rs.getResourceFactoryRegistry.getExtensionToFactoryMap.put( "ecore", new XMIResourceFactoryImpl() )
+  val migrationMMURI: URI =
+    Option.apply(classOf[Metamodel].getResource("/models/OTIChangeMigration.ecore"))
+    .fold[URI]{
+      throw new IllegalArgumentException(
+        "Cannot find the 'models/OTIChangeMigration.ecore' resource!"
+      )
+    }{ resourceURL =>
+      URI.createURI(resourceURL.toString)
+    }
 
-  val migrationMMURI = URI.createFileURI( migrationMMFile.getAbsolutePath )
   val migrationMMR = rs.createResource( migrationMMURI )
   migrationMMR.load( null )
 
@@ -84,13 +94,19 @@ case class Metamodel( val otiDir: File, val rs: ResourceSet = new ResourceSetImp
 
   val migrationMMFactory = migrationMMPkg.getEFactoryInstance
 
-  val Old2NewIDMappingClass = migrationMMPkg.getEClassifier( "Old2NewIDMapping" ).asInstanceOf[EClass]
-  val Old2NewIDMapping_entries = Old2NewIDMappingClass.getEStructuralFeature( "entries" ).asInstanceOf[EReference]
-  val Old2NewIDMapping_modelIdentifier = Old2NewIDMappingClass.getEStructuralFeature( "modelIdentifier" ).asInstanceOf[EAttribute]
+  val Old2NewIDMappingClass =
+    migrationMMPkg.getEClassifier( "Old2NewIDMapping" ).asInstanceOf[EClass]
+  val Old2NewIDMapping_entries =
+    Old2NewIDMappingClass.getEStructuralFeature( "entries" ).asInstanceOf[EReference]
+  val Old2NewIDMapping_modelIdentifier =
+    Old2NewIDMappingClass.getEStructuralFeature( "modelIdentifier" ).asInstanceOf[EAttribute]
 
-  val Old2NewIDEntryClass = migrationMMPkg.getEClassifier( "Old2NewIDEntry" ).asInstanceOf[EClass]
-  val Old2NewIDEntry_old = Old2NewIDEntryClass.getEStructuralFeature( "old" ).asInstanceOf[EAttribute]
-  val Old2NewIDEntry_new = Old2NewIDEntryClass.getEStructuralFeature( "new" ).asInstanceOf[EAttribute]
+  val Old2NewIDEntryClass =
+    migrationMMPkg.getEClassifier( "Old2NewIDEntry" ).asInstanceOf[EClass]
+  val Old2NewIDEntry_old =
+    Old2NewIDEntryClass.getEStructuralFeature( "old" ).asInstanceOf[EAttribute]
+  val Old2NewIDEntry_new =
+    Old2NewIDEntryClass.getEStructuralFeature( "new" ).asInstanceOf[EAttribute]
 
   def loadOld2NewIDMappingResource( uri: URI ): Try[Old2NewIDMapping] =
     try {
