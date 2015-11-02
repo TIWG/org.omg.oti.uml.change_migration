@@ -13,14 +13,14 @@ object Versions {
     svnRevision
   }
   
-  // OTI Change Migration
+  // OTI Change Migration Version
 
   val version = version_prefix + "-" + version_suffix
   
   // OTI Core version
 
   val oti_core_prefix = version_prefix
-  val oti_core_suffix = "445088"
+  val oti_core_suffix = "445104"
   val oti_core_version = oti_core_prefix+"-"+oti_core_suffix
 
   // Eclipse EMF Core  
