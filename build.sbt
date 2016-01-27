@@ -22,10 +22,10 @@ buildUTCDate in Global := {
   formatter.format(new Date)
 }
 
-lazy val core = Project("oti-changeMigration", file("."))
+lazy val core = Project("oti-uml-change_migration", file("."))
   .enablePlugins(IMCEGitPlugin)
   .enablePlugins(IMCEReleasePlugin)
-  .settings(dynamicScriptsResourceSettings(Some("org.omg.oti.changeMigration")))
+  .settings(dynamicScriptsResourceSettings(Some("org.omg.oti.uml.change_migration")))
   .settings(IMCEPlugin.strictScalacFatalWarningsSettings)
   .settings(IMCEPlugin.scalaDocSettings(diagrams=false))
   .settings(
@@ -37,7 +37,7 @@ lazy val core = Project("oti-changeMigration", file("."))
     organizationHomepage :=
       Some(url("http://www.omg.org/members/sysml-rtf-wiki/doku.php?id=rtf5:groups:tools_infrastructure:index")),
 
-    buildInfoPackage := "org.omg.oti.changeMigration",
+    buildInfoPackage := "org.omg.oti.uml.change_migration",
     buildInfoKeys ++= Seq[BuildInfoKey](BuildInfoKey.action("buildDateUTC") { buildUTCDate.value }),
 
     mappings in (Compile, packageSrc) ++= {
@@ -61,11 +61,20 @@ lazy val core = Project("oti-changeMigration", file("."))
     classDirectory in Compile := baseDirectory.value / "svn" / "org.omg.oti.changeMigration" / "bin",
     cleanFiles += (classDirectory in Compile).value,
 
-    resourceDirectory in Compile := baseDirectory.value / "svn" / "org.omg.oti" / "src" / "main" / "resources",
+    packageOptions in (Compile, packageBin) += {
+      val mf = baseDirectory.value / "svn" / "org.omg.oti.changeMigration" / "META-INF" / "MANIFEST.MF"
+      val manifest = Using.fileInputStream(mf) { in =>
+        new java.util.jar.Manifest(in)
+      }
+      Package.JarManifest(manifest)
+    },
+    mappings in (Compile, packageBin) += {
+      (baseDirectory.value / "svn" / "org.omg.oti.changeMigration" / "plugin.xml") -> "plugin.xml"
+    },
 
     libraryDependencies ++= Seq (
-      "org.omg.tiwg" %% "oti-core"
-        % Versions.oti_core % "compile" withSources() withJavadoc(),
+      "org.omg.tiwg" %% "oti-uml-core"
+        % Versions.oti_uml_core % "compile" withSources() withJavadoc(),
 
       "org.eclipse.emf" % "org.eclipse.emf.ecore"
         % Versions.emf_ecore % "provided" withSources() withJavadoc(),
@@ -123,7 +132,7 @@ def dynamicScriptsResourceSettings(dynamicScriptsProjectName: Option[String] = N
       packageSrc in Test,
       packageDoc in Test) map {
       (base, bin, src, doc, binT, srcT, docT) =>
-        val projectName = dynamicScriptsProjectName.getOrElse(base.getName)
+        val projectName = "org.omg.oti.changeMigration"
         val dir = base / "svn" / projectName
         (dir ** "*.dynamicScripts").pair(relativeTo(dir)) ++
           ((dir ** "*.md") --- (dir / "sbt.staging" ***)).pair(relativeTo(dir)) ++
