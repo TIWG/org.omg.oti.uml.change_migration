@@ -75,7 +75,7 @@ lazy val core = Project("oti-uml-change_migration", file("."))
     libraryDependencies ++= Seq (
       "org.omg.tiwg" %% "oti-uml-core"
         % Versions.oti_uml_core % "compile" withSources() withJavadoc() artifacts
-        Artifact("oti-uml-core", "resource", "zip", Some("resource"), Seq(), None, Map()),
+        Artifact("oti-uml-core", "zip", "zip", Some("resource"), Seq(), None, Map()),
 
       "org.eclipse.emf" % "org.eclipse.emf.ecore"
         % Versions.emf_ecore % "provided" withSources() withJavadoc(),
