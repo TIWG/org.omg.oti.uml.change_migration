@@ -2,10 +2,10 @@
 object Versions {
 
   // this project
-  val version = "445380.3"
+  val version = "445380.4"
 
   // https://github.jpl.nasa.gov/imce/org.omg.oti
-  val oti_uml_core="445379.2"
+  val oti_uml_core="445379.3"
 
   // Eclipse EMF (emf.ecore, emf.ecore.xmi, emf.common)
   // Note must be binary compatible with the EMF used in OTI adapters (MD, Papyrus)
