@@ -13,15 +13,6 @@ developers := List(
     email="nicolas.f.rouquette@jpl.nasa.gov",
     url=url("https://gateway.jpl.nasa.gov/personal/rouquett/default.aspx")))
 
-lazy val buildUTCDate = SettingKey[String]("build-utc-date", "The UDC Date of the build")
-
-buildUTCDate in Global := {
-  import java.util.{ Date, TimeZone }
-  val formatter = new java.text.SimpleDateFormat("yyyy-MM-dd-HH:mm")
-  formatter.setTimeZone(TimeZone.getTimeZone("UTC"))
-  formatter.format(new Date)
-}
-
 lazy val core = Project("oti-uml-change_migration", file("."))
   .enablePlugins(IMCEGitPlugin)
   .enablePlugins(IMCEReleasePlugin)
@@ -71,6 +62,8 @@ lazy val core = Project("oti-uml-change_migration", file("."))
     mappings in (Compile, packageBin) += {
       (baseDirectory.value / "svn" / "org.omg.oti.changeMigration" / "plugin.xml") -> "plugin.xml"
     },
+
+    extractArchives := {},
 
     libraryDependencies ++= Seq (
       "org.omg.tiwg" %% "oti-uml-core"
