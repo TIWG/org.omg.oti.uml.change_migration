@@ -51,6 +51,8 @@ lazy val core = Project("oti-uml-change_migration", file("."))
 
     scalaSource in Compile := baseDirectory.value / "svn" / "org.omg.oti.changeMigration" / "src" / "main" / "scala",
 
+    resourceDirectory in Compile := baseDirectory.value / "svn" / "org.omg.oti.changeMigration" / "src" / "main" / "resources",
+
     classDirectory in Compile := baseDirectory.value / "svn" / "org.omg.oti.changeMigration" / "bin",
     cleanFiles += (classDirectory in Compile).value,
 
@@ -131,6 +133,7 @@ def dynamicScriptsResourceSettings(dynamicScriptsProjectName: Option[String] = N
         val projectName = "org.omg.oti.changeMigration"
         val dir = base / "svn" / projectName
           (dir ** "*.md").pair(relativeTo(dir)) ++
+          com.typesafe.sbt.packager.MappingsHelper.directory(dir / "resources") ++
           addIfExists(bin, "lib/" + bin.name) ++
           addIfExists(binT, "lib/" + binT.name) ++
           addIfExists(src, "lib.sources/" + src.name) ++
