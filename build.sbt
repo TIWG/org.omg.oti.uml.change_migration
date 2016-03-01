@@ -3,6 +3,7 @@ import sbt.Keys._
 import sbt._
 
 import gov.nasa.jpl.imce.sbt._
+import gov.nasa.jpl.imce.sbt.ProjectHelper._
 
 useGpg := true
 
@@ -16,6 +17,7 @@ developers := List(
 lazy val core = Project("oti-uml-change_migration", file("."))
   .enablePlugins(IMCEGitPlugin)
   .enablePlugins(IMCEReleasePlugin)
+  .settings(IMCEReleasePlugin.packageReleaseProcessSettings)
   .settings(dynamicScriptsResourceSettings(Some("org.omg.oti.uml.change_migration")))
   .settings(IMCEPlugin.strictScalacFatalWarningsSettings)
   .settings(IMCEPlugin.scalaDocSettings(diagrams=false))
@@ -49,12 +51,11 @@ lazy val core = Project("oti-uml-change_migration", file("."))
     organizationName := "JPL, Caltech & Object Management Group",
     organizationHomepage := Some(url("http://solitaire.omg.org/browse/TIWG")),
 
-    scalaSource in Compile := baseDirectory.value / "svn" / "org.omg.oti.changeMigration" / "src" / "main" / "scala",
+    scalaSource in Compile :=
+      baseDirectory.value / "svn" / "org.omg.oti.changeMigration" / "src" / "main" / "scala",
 
-    resourceDirectory in Compile := baseDirectory.value / "svn" / "org.omg.oti.changeMigration" / "src" / "main" / "resources",
-
-    classDirectory in Compile := baseDirectory.value / "svn" / "org.omg.oti.changeMigration" / "bin",
-    cleanFiles += (classDirectory in Compile).value,
+    resourceDirectory in Compile :=
+      baseDirectory.value / "svn" / "org.omg.oti.changeMigration" / "src" / "main" / "resources",
 
     packageOptions in (Compile, packageBin) += {
       val mf = baseDirectory.value / "svn" / "org.omg.oti.changeMigration" / "META-INF" / "MANIFEST.MF"
@@ -70,10 +71,6 @@ lazy val core = Project("oti-uml-change_migration", file("."))
     extractArchives := {},
 
     libraryDependencies ++= Seq (
-      "org.omg.tiwg" %% "oti-uml-core"
-        % Versions_oti_uml_core.version % "compile" withSources() withJavadoc() artifacts
-        Artifact("oti-uml-core", "zip", "zip", Some("resource"), Seq(), None, Map()),
-
       "org.eclipse.emf" % "org.eclipse.emf.ecore"
         % Versions.emf_ecore % "provided" withSources() withJavadoc(),
 
@@ -92,7 +89,15 @@ lazy val core = Project("oti-uml-change_migration", file("."))
     IMCEKeys.pomRepositoryPathRegex := """\<repositoryPath\>\s*([^\"]*)\s*\<\/repositoryPath\>""".r
 
   )
-  .settings(IMCEReleasePlugin.packageReleaseProcessSettings)
+  .dependsOnSourceProjectOrLibraryArtifacts(
+    "oti-uml-core",
+    "org.omg.oti.uml.core",
+    Seq(
+      "org.omg.tiwg" %% "oti-uml-core"
+        % Versions_oti_uml_core.version % "compile" withSources() withJavadoc() artifacts
+        Artifact("oti-uml-core", "zip", "zip", Some("resource"), Seq(), None, Map())
+    )
+  )
 
 
 def dynamicScriptsResourceSettings(dynamicScriptsProjectName: Option[String] = None): Seq[Setting[_]] = {
