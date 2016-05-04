@@ -52,20 +52,20 @@ lazy val core = Project("oti-uml-change_migration", file("."))
     organizationHomepage := Some(url("http://solitaire.omg.org/browse/TIWG")),
 
     scalaSource in Compile :=
-      baseDirectory.value / "svn" / "org.omg.oti.changeMigration" / "src" / "main" / "scala",
+      baseDirectory.value / "svn" / "src" / "main" / "scala",
 
     resourceDirectory in Compile :=
-      baseDirectory.value / "svn" / "org.omg.oti.changeMigration" / "src" / "main" / "resources",
+      baseDirectory.value / "svn" / "src" / "main" / "resources",
 
     packageOptions in (Compile, packageBin) += {
-      val mf = baseDirectory.value / "svn" / "org.omg.oti.changeMigration" / "META-INF" / "MANIFEST.MF"
+      val mf = baseDirectory.value / "svn" / "META-INF" / "MANIFEST.MF"
       val manifest = Using.fileInputStream(mf) { in =>
         new java.util.jar.Manifest(in)
       }
       Package.JarManifest(manifest)
     },
     mappings in (Compile, packageBin) += {
-      (baseDirectory.value / "svn" / "org.omg.oti.changeMigration" / "plugin.xml") -> "plugin.xml"
+      (baseDirectory.value / "svn" / "plugin.xml") -> "plugin.xml"
     },
 
     extractArchives := {},
@@ -136,7 +136,7 @@ def dynamicScriptsResourceSettings(dynamicScriptsProjectName: Option[String] = N
       packageDoc in Test) map {
       (base, bin, src, doc, binT, srcT, docT) =>
         val projectName = "org.omg.oti.changeMigration"
-        val dir = base / "svn" / projectName
+        val dir = base / "svn"
           (dir ** "*.md").pair(relativeTo(dir)) ++
           com.typesafe.sbt.packager.MappingsHelper.directory(dir / "resources") ++
           addIfExists(bin, "lib/" + bin.name) ++
