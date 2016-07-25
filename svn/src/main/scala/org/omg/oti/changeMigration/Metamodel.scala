@@ -45,27 +45,25 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EPackage
-import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.emf.ecore.EReference
-import org.eclipse.emf.ecore.EAttribute
 import org.eclipse.emf.common.util.EList
 
 import scala.{Option,None,Some,StringContext}
-import scala.Predef.{classOf,require,String}
+import scala.Predef.{classOf,String}
 import scala.collection.JavaConversions._
 import scala.collection.immutable._
 import scala.language.postfixOps
-import scala.reflect.ClassTag
 import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
 
 import java.lang.Throwable
 import java.lang.IllegalArgumentException
-import java.lang.System
 
-case class Metamodel( val otiDir: File, val rs: ResourceSet = new ResourceSetImpl() ) {
+case class Metamodel
+( otiDir: File,
+  rs: ResourceSet = new ResourceSetImpl()
+) {
 
   rs
   .getResourceFactoryRegistry
@@ -122,7 +120,7 @@ case class Metamodel( val otiDir: File, val rs: ResourceSet = new ResourceSetImp
     try {
       val r = rs.getResource( uri, true )
       val contents = r.getContents
-      if ( contents.isEmpty() )
+      if ( contents.isEmpty )
         Failure( new IllegalArgumentException( s"Empty model: '$uri'" ) )
       val top = contents.get( 0 )
       if ( top.eClass != Old2NewIDMappingClass )

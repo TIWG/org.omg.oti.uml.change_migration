@@ -7,6 +7,8 @@ import gov.nasa.jpl.imce.sbt.ProjectHelper._
 
 useGpg := true
 
+updateOptions := updateOptions.value.withCachedResolution(true)
+
 developers := List(
   Developer(
     id="rouquett",
@@ -20,11 +22,11 @@ lazy val core = Project("oti-uml-change_migration", file("."))
   .settings(IMCEReleasePlugin.packageReleaseProcessSettings)
   .settings(dynamicScriptsResourceSettings(Some("org.omg.oti.uml.change_migration")))
   .settings(IMCEPlugin.strictScalacFatalWarningsSettings)
-  .settings(IMCEPlugin.scalaDocSettings(diagrams=false))
+  //.settings(IMCEPlugin.scalaDocSettings(diagrams=false))
   .settings(
     IMCEKeys.licenseYearOrRange := "2014-2016",
     IMCEKeys.organizationInfo := IMCEPlugin.Organizations.oti,
-    IMCEKeys.targetJDK := IMCEKeys.jdk17.value,
+    IMCEKeys.targetJDK := IMCEKeys.jdk18.value,
 
     organization := "org.omg.tiwg",
     organizationHomepage :=
