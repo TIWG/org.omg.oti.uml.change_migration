@@ -3,8 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Change Migration support for OTI API
 Bundle-SymbolicName: org.omg.oti.changeMigration;singleton:=true
 Bundle-Version: 0.19.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: org.omg.oti;bundle-version="0.19.0";visibility:=reexport,
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.omg.oti.uml.core_2.11;bundle-version="3.0.3";visibility:=reexport,
  org.eclipse.emf.ecore.xmi;bundle-version="2.10.1";visibility:=reexport
 Export-Package: org.omg.oti.changeMigration,
  org.omg.oti.ecoreMetamodel

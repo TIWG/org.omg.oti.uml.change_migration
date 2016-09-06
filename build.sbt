@@ -5,16 +5,7 @@ import sbt._
 import gov.nasa.jpl.imce.sbt._
 import gov.nasa.jpl.imce.sbt.ProjectHelper._
 
-useGpg := true
-
 updateOptions := updateOptions.value.withCachedResolution(true)
-
-developers := List(
-  Developer(
-    id="rouquett",
-    name="Nicolas F. Rouquette",
-    email="nicolas.f.rouquette@jpl.nasa.gov",
-    url=url("https://gateway.jpl.nasa.gov/personal/rouquett/default.aspx")))
 
 lazy val core = Project("oti-uml-change_migration", file("."))
   .enablePlugins(IMCEGitPlugin)
@@ -24,13 +15,9 @@ lazy val core = Project("oti-uml-change_migration", file("."))
   .settings(IMCEPlugin.strictScalacFatalWarningsSettings)
   //.settings(IMCEPlugin.scalaDocSettings(diagrams=false))
   .settings(
-    IMCEKeys.licenseYearOrRange := "2014-2016",
+    IMCEKeys.licenseYearOrRange := "2015-2016",
     IMCEKeys.organizationInfo := IMCEPlugin.Organizations.oti,
     IMCEKeys.targetJDK := IMCEKeys.jdk18.value,
-
-    organization := "org.omg.tiwg",
-    organizationHomepage :=
-      Some(url("http://www.omg.org/members/sysml-rtf-wiki/doku.php?id=rtf5:groups:tools_infrastructure:index")),
 
     buildInfoPackage := "org.omg.oti.uml.change_migration",
     buildInfoKeys ++= Seq[BuildInfoKey](BuildInfoKey.action("buildDateUTC") { buildUTCDate.value }),
@@ -50,27 +37,25 @@ lazy val core = Project("oti-uml-change_migration", file("."))
     },
 
     git.baseVersion := Versions.version,
-    organizationName := "JPL, Caltech & Object Management Group",
-    organizationHomepage := Some(url("http://solitaire.omg.org/browse/TIWG")),
-
-    scalaSource in Compile :=
-      baseDirectory.value / "svn" / "src" / "main" / "scala",
 
     resourceDirectory in Compile :=
-      baseDirectory.value / "svn" / "src" / "main" / "resources",
+      baseDirectory.value / "src" / "main" / "resources",
 
     packageOptions in (Compile, packageBin) += {
-      val mf = baseDirectory.value / "svn" / "META-INF" / "MANIFEST.MF"
+      val mf = baseDirectory.value / "META-INF" / "MANIFEST.MF"
       val manifest = Using.fileInputStream(mf) { in =>
         new java.util.jar.Manifest(in)
       }
       Package.JarManifest(manifest)
     },
     mappings in (Compile, packageBin) += {
-      (baseDirectory.value / "svn" / "plugin.xml") -> "plugin.xml"
+      (baseDirectory.value / "plugin.xml") -> "plugin.xml"
     },
 
     extractArchives := {},
+
+    resolvers += Resolver.bintrayRepo("jpl-imce", "gov.nasa.jpl.imce"),
+    resolvers += Resolver.bintrayRepo("tiwg", "org.omg.tiwg"),
 
     libraryDependencies ++= Seq (
       "org.eclipse.emf" % "org.eclipse.emf.ecore"
@@ -81,23 +66,15 @@ lazy val core = Project("oti-uml-change_migration", file("."))
 
       "org.eclipse.emf" % "org.eclipse.emf.common"
         % Versions.emf_ecore % "provided" withSources() withJavadoc()
-    ),
-
-    IMCEKeys.nexusJavadocRepositoryRestAPIURL2RepositoryName := Map(
-       "https://oss.sonatype.org/service/local" -> "releases",
-       "https://cae-nexuspro.jpl.nasa.gov/nexus/service/local" -> "JPL",
-       "https://cae-nexuspro.jpl.nasa.gov/nexus/content/groups/jpl.beta.group" -> "JPL Beta Group",
-       "https://cae-nexuspro.jpl.nasa.gov/nexus/content/groups/jpl.public.group" -> "JPL Public Group"),
-    IMCEKeys.pomRepositoryPathRegex := """\<repositoryPath\>\s*([^\"]*)\s*\<\/repositoryPath\>""".r
-
+    )
   )
   .dependsOnSourceProjectOrLibraryArtifacts(
     "oti-uml-core",
     "org.omg.oti.uml.core",
     Seq(
-      "org.omg.tiwg" %% "oti-uml-core"
+      "org.omg.tiwg" %% "org.omg.oti.uml.core"
         % Versions_oti_uml_core.version % "compile" withSources() withJavadoc() artifacts
-        Artifact("oti-uml-core", "zip", "zip", Some("resource"), Seq(), None, Map())
+        Artifact("org.omg.oti.uml.core", "zip", "zip", Some("resource"), Seq(), None, Map())
     )
   )
 
