@@ -48,16 +48,14 @@ import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.common.util.EList
 
-import scala.{Option,None,Some,StringContext}
+import scala.{Option,None,Some,StringContext,Unit}
 import scala.Predef.{classOf,String}
 import scala.collection.JavaConversions._
 import scala.collection.immutable._
 import scala.language.postfixOps
-import scala.util.Try
-import scala.util.Failure
-import scala.util.Success
+import scala.util.control.Exception._
+import scala.util.{Failure,Success,Try}
 
-import java.lang.Throwable
 import java.lang.IllegalArgumentException
 
 case class Metamodel
@@ -116,8 +114,13 @@ case class Metamodel
   val Old2NewIDEntry_newUUID =
     Old2NewIDEntryClass.getEStructuralFeatureAttribute( "newUUID" )
 
-  def loadOld2NewIDMappingResource( uri: URI ): Try[Old2NewIDMapping] =
-    try {
+  def loadOld2NewIDMappingResource( uri: URI )
+  : Try[Old2NewIDMapping]
+  = nonFatalCatch[Try[Old2NewIDMapping]]
+    .withApply { (cause: java.lang.Throwable) =>
+      Failure(cause)
+    }
+    .apply {
       val r = rs.getResource( uri, true )
       val contents = r.getContents
       if ( contents.isEmpty )
@@ -128,18 +131,18 @@ case class Metamodel
 
       Success( new Old2NewIDMapping( top )( this ) )
     }
-    catch {
-      case t: Throwable => Failure( t )
-    }
 
-  def makeOld2NewIDMapping( modelIdentifier: String ): Old2NewIDMapping = {
+  def makeOld2NewIDMapping( modelIdentifier: String )
+  : Old2NewIDMapping
+  = {
     val mapping = new Old2NewIDMapping( migrationMMFactory.create( Old2NewIDMappingClass ) )( this )
     mapping.setModelIdentifier( modelIdentifier )
     mapping
   }
 
-  def makeOld2NewIDEntry: Old2NewIDEntry =
-    new Old2NewIDEntry( migrationMMFactory.create( Old2NewIDEntryClass ) )( this )
+  def makeOld2NewIDEntry
+  : Old2NewIDEntry
+  = new Old2NewIDEntry( migrationMMFactory.create( Old2NewIDEntryClass ) )( this )
 
 }
 
@@ -147,16 +150,20 @@ class Old2NewIDMapping( val eObject: EObject )( implicit migrationMM: Metamodel 
 
   import migrationMM._
 
-  def getModelIdentifier: Option[String] =
-    eObject.eGet( Old2NewIDMapping_modelIdentifier ) match {
+  def getModelIdentifier
+  : Option[String]
+  = eObject.eGet( Old2NewIDMapping_modelIdentifier ) match {
       case id: String => Some( id )
       case _          => None
     }
 
-  def setModelIdentifier( modelIdentifier: String ) =
-    eObject.eSet( Old2NewIDMapping_modelIdentifier, modelIdentifier )
+  def setModelIdentifier( modelIdentifier: String )
+  : Unit
+  = eObject.eSet( Old2NewIDMapping_modelIdentifier, modelIdentifier )
 
-  def getEntries: List[Old2NewIDEntry] = eObject.eGet( Old2NewIDMapping_entries ) match {
+  def getEntries
+  : List[Old2NewIDEntry]
+  = eObject.eGet( Old2NewIDMapping_entries ) match {
     case xs: EList[_] => xs flatMap {
       case x: EObject if x.eClass == Old2NewIDEntryClass => Some( new Old2NewIDEntry( x ) )
       case _ => None
@@ -165,9 +172,14 @@ class Old2NewIDMapping( val eObject: EObject )( implicit migrationMM: Metamodel 
     case _ => List()
   }
 
-  def addEntry( entry: Old2NewIDEntry ) = eObject.eGet( Old2NewIDMapping_entries ) match {
-    case l: EList[_] => l.asInstanceOf[EList[EObject]].add( entry.eObject )
-    case null        => eObject.eSet( Old2NewIDMapping_entries, entry.eObject )
+  def addEntry( entry: Old2NewIDEntry )
+  : Unit
+  = eObject.eGet( Old2NewIDMapping_entries ) match {
+    case l: EList[_] =>
+      l.asInstanceOf[EList[EObject]].add( entry.eObject )
+      ()
+    case null        =>
+      eObject.eSet( Old2NewIDMapping_entries, entry.eObject )
   }
 }
 
@@ -180,27 +192,41 @@ class Old2NewIDEntry( val eObject: EObject )( implicit migrationMM: Metamodel ) 
     case _         => None
   }
 
-  def setOldID( id: String ) = eObject.eSet( Old2NewIDEntry_oldID, id )
+  def setOldID( id: String )
+  : Unit
+  = eObject.eSet( Old2NewIDEntry_oldID, id )
 
-  def getOldUUID: Option[String] = eObject.eGet( Old2NewIDEntry_oldUUID ) match {
+  def getOldUUID
+  : Option[String]
+  = eObject.eGet( Old2NewIDEntry_oldUUID ) match {
     case s: String => Some( s )
     case _         => None
   }
 
-  def setOldUUID( uuid: String ) = eObject.eSet( Old2NewIDEntry_oldUUID, uuid )
+  def setOldUUID( uuid: String )
+  : Unit
+  = eObject.eSet( Old2NewIDEntry_oldUUID, uuid )
 
-  def getNewID: Option[String] = eObject.eGet( Old2NewIDEntry_newID ) match {
+  def getNewID
+  : Option[String]
+  = eObject.eGet( Old2NewIDEntry_newID ) match {
     case s: String => Some( s )
     case _         => None
   }
 
-  def setNewID( id: String ) = eObject.eSet( Old2NewIDEntry_newID, id )
+  def setNewID( id: String )
+  : Unit
+  = eObject.eSet( Old2NewIDEntry_newID, id )
 
-  def getNewUUID: Option[String] = eObject.eGet( Old2NewIDEntry_newUUID ) match {
+  def getNewUUID
+  : Option[String]
+  = eObject.eGet( Old2NewIDEntry_newUUID ) match {
     case s: String => Some( s )
     case _         => None
   }
 
-  def setNewUUID( uuid: String ) = eObject.eSet( Old2NewIDEntry_newUUID, uuid )
+  def setNewUUID( uuid: String )
+  : Unit
+  = eObject.eSet( Old2NewIDEntry_newUUID, uuid )
 
 }

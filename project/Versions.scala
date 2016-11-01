@@ -2,7 +2,7 @@
 object Versions {
 
   // this project
-  val version = "3.0.2"
+  val version = "3.1.0"
 
   // Eclipse EMF (emf.ecore, emf.ecore.xmi, emf.common)
   // Note must be binary compatible with the EMF used in OTI adapters (MD, Papyrus)

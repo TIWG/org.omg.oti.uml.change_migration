@@ -13,7 +13,6 @@ lazy val core = Project("oti-uml-change_migration", file("."))
   .settings(IMCEReleasePlugin.packageReleaseProcessSettings)
   .settings(dynamicScriptsResourceSettings(Some("org.omg.oti.uml.change_migration")))
   .settings(IMCEPlugin.strictScalacFatalWarningsSettings)
-  //.settings(IMCEPlugin.scalaDocSettings(diagrams=false))
   .settings(
     IMCEKeys.licenseYearOrRange := "2015-2016",
     IMCEKeys.organizationInfo := IMCEPlugin.Organizations.oti,
