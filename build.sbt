@@ -25,7 +25,7 @@ lazy val core = Project("oti-uml-change_migration", file("."))
       import Path.{flat, relativeTo}
       val base = (sourceManaged in Compile).value
       val srcs = (managedSources in Compile).value
-      srcs x (relativeTo(base) | flat)
+      srcs pair (relativeTo(base) | flat)
     },
 
     projectID := {
@@ -56,6 +56,12 @@ lazy val core = Project("oti-uml-change_migration", file("."))
     resolvers += Resolver.bintrayRepo("jpl-imce", "gov.nasa.jpl.imce"),
     resolvers += Resolver.bintrayRepo("tiwg", "org.omg.tiwg"),
 
+    resolvers += "Artima Maven Repository" at "http://repo.artima.com/releases",
+    scalacOptions in (Compile, compile) += s"-P:artima-supersafe:config-file:${baseDirectory.value}/project/supersafe.cfg",
+    scalacOptions in (Test, compile) += s"-P:artima-supersafe:config-file:${baseDirectory.value}/project/supersafe.cfg",
+    scalacOptions in (Compile, doc) += "-Xplugin-disable:artima-supersafe",
+    scalacOptions in (Test, doc) += "-Xplugin-disable:artima-supersafe",
+
     libraryDependencies ++= Seq (
       "org.eclipse.emf" % "org.eclipse.emf.ecore"
         % Versions.emf_ecore % "provided" withSources() withJavadoc(),
@@ -73,7 +79,7 @@ lazy val core = Project("oti-uml-change_migration", file("."))
     Seq(
       "org.omg.tiwg" %% "org.omg.oti.uml.core"
         % Versions_oti_uml_core.version % "compile" withSources() withJavadoc() artifacts
-        Artifact("org.omg.oti.uml.core", "zip", "zip", Some("resource"), Seq(), None, Map())
+        Artifact("org.omg.oti.uml.core", "zip", "zip", "resource")
     )
   )
 
