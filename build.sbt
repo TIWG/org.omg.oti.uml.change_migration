@@ -9,8 +9,6 @@ updateOptions := updateOptions.value.withCachedResolution(true)
 
 lazy val core = Project("oti-uml-change_migration", file("."))
   .enablePlugins(IMCEGitPlugin)
-  .enablePlugins(IMCEReleasePlugin)
-  .settings(IMCEReleasePlugin.packageReleaseProcessSettings)
   .settings(dynamicScriptsResourceSettings("org.omg.oti.uml.change_migration"))
   .settings(IMCEPlugin.strictScalacFatalWarningsSettings)
   .settings(
@@ -35,8 +33,6 @@ lazy val core = Project("oti-uml-change_migration", file("."))
         "artifact.kind" -> "generic.library")
     },
 
-    git.baseVersion := Versions.version,
-
     resourceDirectory in Compile :=
       baseDirectory.value / "src" / "main" / "resources",
 
@@ -50,8 +46,6 @@ lazy val core = Project("oti-uml-change_migration", file("."))
     mappings in (Compile, packageBin) += {
       (baseDirectory.value / "plugin.xml") -> "plugin.xml"
     },
-
-    extractArchives := {},
 
     resolvers += Resolver.bintrayRepo("jpl-imce", "gov.nasa.jpl.imce"),
     resolvers += Resolver.bintrayRepo("tiwg", "org.omg.tiwg"),
